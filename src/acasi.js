@@ -12,13 +12,9 @@ import ModelElement from '@ckeditor/ckeditor5-engine/src/model/element';
 import ViewContainerElement from '@ckeditor/ckeditor5-engine/src/view/containerelement';
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import Widget from '@ckeditor/ckeditor5-widget/src/widget';
-import { toWidget } from '@ckeditor/ckeditor5-widget/src/utils';
 import imageIcon from '@ckeditor/ckeditor5-core/theme/icons/picker.svg';
 import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 import ViewEmptyElement from '@ckeditor/ckeditor5-engine/src/view/emptyelement';
-import { toImageWidget } from '@ckeditor/ckeditor5-image/src/image/utils';
-
-const ACASI = 'acasi';
 
 export default class Acasi extends Plugin {
   static get requires() {
@@ -126,10 +122,10 @@ export default class Acasi extends Plugin {
 
 
     // Add acasi button to feature components.
-    editor.ui.componentFactory.add( 'insertAcasi', locale => {
+    editor.ui.componentFactory.add( 'acasi', locale => {
       const view = new ButtonView(locale);
       view.set({
-        label: t('Acasi'),
+        label: 'Acasi',
         icon: imageIcon,
         tooltip: true
       });
@@ -148,10 +144,10 @@ export default class Acasi extends Plugin {
         let name = 't_' + filename;
 
         editor.document.enqueueChanges( () => {
-          const imageElement1 = new ModelElement( 'image', { src: '../src/assets/images/never.png'});
-          const imageElement2 = new ModelElement( 'image', { src: '../src/assets/images/once.png'});
-          const imageElement3 = new ModelElement( 'image', { src: '../src/assets/images/few.png'});
-          const imageElement4 = new ModelElement( 'image', { src: '../src/assets/images/many.png'});
+          const imageElement1 = new ModelElement( 'image', { src: 'assets/images/never.png'});
+          const imageElement2 = new ModelElement( 'image', { src: 'assets/images/once.png'});
+          const imageElement3 = new ModelElement( 'image', { src: 'assets/images/few.png'});
+          const imageElement4 = new ModelElement( 'image', { src: 'assets/images/many.png'});
 
           const prb1 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'never'}, [imageElement1])
           const prb2 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'once'}, [imageElement2])
