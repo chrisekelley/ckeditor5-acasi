@@ -6,17 +6,17 @@
 /* global console, window, document */
 
 
+import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
+import imageIcon from '@ckeditor/ckeditor5-core/theme/icons/picker.svg';
 import buildModelConverter from '@ckeditor/ckeditor5-engine/src/conversion/buildmodelconverter';
 import buildViewConverter from '@ckeditor/ckeditor5-engine/src/conversion/buildviewconverter';
 import ModelElement from '@ckeditor/ckeditor5-engine/src/model/element';
 import ViewContainerElement from '@ckeditor/ckeditor5-engine/src/view/containerelement';
-import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
-import Widget from '@ckeditor/ckeditor5-widget/src/widget';
-import { toWidget } from '@ckeditor/ckeditor5-widget/src/utils';
-import imageIcon from '@ckeditor/ckeditor5-core/theme/icons/picker.svg';
-import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 import ViewEmptyElement from '@ckeditor/ckeditor5-engine/src/view/emptyelement';
-import { toImageWidget } from '@ckeditor/ckeditor5-image/src/image/utils';
+import {toImageWidget} from '@ckeditor/ckeditor5-image/src/image/utils';
+import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
+import {toWidget} from '@ckeditor/ckeditor5-widget/src/utils';
+import Widget from '@ckeditor/ckeditor5-widget/src/widget';
 
 export default class Acasi extends Plugin {
   static get requires() {
