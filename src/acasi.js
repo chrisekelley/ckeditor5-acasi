@@ -5,7 +5,6 @@
 
 /* global console, window, document */
 
-
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import imageIcon from '@ckeditor/ckeditor5-core/theme/icons/picker.svg';
 import buildModelConverter from '@ckeditor/ckeditor5-engine/src/conversion/buildmodelconverter';
@@ -17,10 +16,23 @@ import {toImageWidget} from '@ckeditor/ckeditor5-image/src/image/utils';
 import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 import {toWidget} from '@ckeditor/ckeditor5-widget/src/utils';
 import Widget from '@ckeditor/ckeditor5-widget/src/widget';
+import IntroSrcDialog from './introsrcdialog';
+import FormDialog from './formdialog';
+// import { isAcasiWidgetSelected } from './utils';
+import {toAcasiWidget, toFormWidget, isAcasiWidgetSelected} from './utils';
+
 
 export default class Acasi extends Plugin {
+
   static get requires() {
-    return [ Widget ];
+    return [ Widget, IntroSrcDialog, FormDialog ];
+  }
+
+  /**
+   * @inheritDoc
+   */
+  static get pluginName() {
+    return 'Acasi';
   }
 
   init() {
@@ -30,6 +42,18 @@ export default class Acasi extends Plugin {
     const data = editor.data;
     const editing = editor.editing;
     const t = editor.t;
+    const contextualToolbar = editor.plugins.get( 'ContextualToolbar' );
+
+    // If `ContextualToolbar` plugin is loaded, it should be disabled for images
+    // which have their own toolbar to avoid duplication.
+    // https://github.com/ckeditor/ckeditor5-image/issues/110
+    if ( contextualToolbar ) {
+      this.listenTo( contextualToolbar, 'show', evt => {
+        if ( isAcasiWidgetSelected( editor.editing.view.selection ) ) {
+          evt.stop();
+        }
+      }, { priority: 'high' } );
+    }
 
     // Configure schema.
     schema.allow( { name: '$inline', inside: '$root' } );
@@ -42,12 +66,28 @@ export default class Acasi extends Plugin {
     schema.objects.add( 'paper-radio-button' );
 
     schema.registerItem( 'tangy-acasi' );
-    schema.allow( { name: 'tangy-acasi', attributes: [ 'intro-src' ], inside: '$root' } );
+    schema.allow( { name: 'tangy-acasi', attributes: [ 'intro-src' ], inside: 'form' } );
     // schema.allow( { name: 'tangy-acasi', inside: '$root' } );
     schema.allow( { name: '$inline', inside: 'tangy-acasi' } );
     schema.allow( { name: 'image', inside: 'tangy-acasi' } );
     schema.allow( { name: 'paper-radio-button', inside: 'tangy-acasi' } );
     schema.objects.add( 'tangy-acasi' );
+
+    schema.registerItem( 'form' );
+    schema.allow( { name: 'form', attributes: [ 'id', 'onchange' ], inside: '$root' } );
+    schema.allow( { name: '$inline', inside: 'form' } );
+    schema.allow( { name: 'image', inside: 'form' } );
+    schema.objects.add( 'form' );
+
+    // Build converter from model element to view element is used to render the getData output for the widget when you create new Elements in the editor.
+    buildModelConverter().for( data.modelToView )
+      .fromElement( 'form' )
+      .toElement( (element) => {
+        const id = element.item.getAttribute('id')
+        const onchange = element.item.getAttribute('onchange')
+        let container = new ViewContainerElement( 'form', {'id': id, 'onchange': onchange} );
+        return container
+      })
 
     // Build converter from model element to view element is used to render the getData output for the widget when you create new Elements in the editor.
     buildModelConverter().for( data.modelToView )
@@ -71,6 +111,26 @@ export default class Acasi extends Plugin {
 
     //  Build converter from model element to view element for editing view pipeline. This affects how this element is rendered in the editor.
     buildModelConverter().for( editing.modelToView )
+      .fromElement( 'form' )
+      .toElement( (element) => {
+        // const imageContainer = createImageViewElement();
+        console.log("tangy-acasi element")
+        const figureContainer1 = new ViewContainerElement( 'figure', { class: 'paper-radio-button' });
+        const figureContainer2 = new ViewContainerElement( 'figure', { class: 'paper-radio-button' });
+        const figureContainer3 = new ViewContainerElement( 'figure', { class: 'paper-radio-button' });
+        const figureContainer4 = new ViewContainerElement( 'figure', { class: 'paper-radio-button' });
+        const widgetContainer = new ViewContainerElement( 'figure', { class: 'tangy-acasi' },
+          [figureContainer1, figureContainer2, figureContainer3, figureContainer4] );
+        const acasiWdiget = toAcasiWidget( widgetContainer );
+        const formContainer = new ViewContainerElement( 'figure', { class: 'tangy-form' },
+          [acasiWdiget] );
+        const formWdiget = toFormWidget( 'form', formContainer );
+        formWdiget.setAttribute( 'contenteditable', true );
+        return formWdiget;
+      } );
+
+    //  Build converter from model element to view element for editing view pipeline. This affects how this element is rendered in the editor.
+    buildModelConverter().for( editing.modelToView )
       .fromElement( 'tangy-acasi' )
       .toElement( (element) => {
         // const imageContainer = createImageViewElement();
@@ -81,7 +141,7 @@ export default class Acasi extends Plugin {
         const figureContainer4 = new ViewContainerElement( 'figure', { class: 'paper-radio-button' });
         const widgetContainer = new ViewContainerElement( 'figure', { class: 'tangy-acasi' },
           [figureContainer1, figureContainer2, figureContainer3, figureContainer4] );
-        const widget = toWidget( widgetContainer );
+        const widget = toAcasiWidget( widgetContainer );
         widget.setAttribute( 'contenteditable', true );
         return widget;
       } );
@@ -159,8 +219,9 @@ export default class Acasi extends Plugin {
           // // const widgetElement = new ModelElement('figure', { class: 'fancy-widget' },imageElement)
           // editor.data.insertContent( imageElement, editor.document.selection );
           const acasi = new ModelElement( 'tangy-acasi', {'intro-src':url}, [prb1, prb2, prb3, prb4])
+          const form = new ModelElement( 'form', {'id': '', 'onchange': ''}, [acasi])
           // const acasi = new ModelElement( 'tangy-acasi', { src: imageUrl });
-          editor.data.insertContent( acasi, editor.document.selection );
+          editor.data.insertContent( form, editor.document.selection );
         } );
       });
       return view;
