@@ -29,6 +29,7 @@ export default class IntroSrcDialogCommand extends Command {
    */
   refresh() {
     const element = this.editor.document.selection.getSelectedElement();
+    console.log("is it the correct acasi element?")
 
     this.isEnabled = isAcasi( element );
 

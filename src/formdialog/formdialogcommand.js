@@ -9,6 +9,8 @@
 
 import Command from '@ckeditor/ckeditor5-core/src/command';
 import { isCustomWidget } from '../utils';
+import { isCustomWidgetSelected } from './../utils';
+
 
 /**
  * The intro src dialog command. It is used to change the `id` attribute on `<form>` elements.
@@ -28,11 +30,15 @@ export default class FormDialogCommand extends Command {
    * @inheritDoc
    */
   refresh() {
-    const element = this.editor.document.selection.getSelectedElement();
+    // const element = this.editor.document.selection.getSelectedElement();
+    const element = this.editor.editing.view.selection;
+    console.log("is it the correct form element?")
 
-    this.isEnabled = isCustomWidget( 'form', element );
+      // this.isEnabled = isCustomWidget( 'form', element );
+      this.isEnabled = isCustomWidgetSelected( 'form', element );
 
-    if ( isCustomWidget( 'form', element ) && element.hasAttribute( 'id' ) ) {
+    // if ( isCustomWidget( 'form', element ) && element.hasAttribute( 'id' ) ) {
+    if ( isCustomWidgetSelected( 'form', element ) && element.hasAttribute( 'id' ) ) {
       this.value = element.getAttribute( 'id' );
       console.log("getting value of id.")
     } else {
