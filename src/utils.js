@@ -1,4 +1,19 @@
 
+
+/**
+ * @license Copyright (c) 2003-2017, CKSource - Frederico Knabben. All rights reserved.
+ * For licensing, see LICENSE.md.
+ */
+
+/**
+ * @module ckeditor5-acasi/utils
+ */
+
+import BalloonPanelView from '@ckeditor/ckeditor5-ui/src/panel/balloon/balloonpanelview';
+import { toWidget, isWidget } from '@ckeditor/ckeditor5-widget/src/utils';
+import ModelElement from '@ckeditor/ckeditor5-engine/src/model/element';
+
+
 /**
  * @license Copyright (c) 2003-2017, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md.
@@ -22,7 +37,7 @@ export function toFormWidget( widget, viewElement ) {
 
   // const symbol = Symbol(widget);
   // symbols[widget] = symbol
-
+  viewElement.setCustomProperty( formSymbol, true );
   const label = 'form'
   return toWidget( viewElement, { label: labelCreator } );
 
@@ -117,19 +132,6 @@ export function isAcasi( modelElement ) {
   return modelElement instanceof ModelElement && modelElement.name == 'tangy-acasi';
 }
 
-
-/**
- * @license Copyright (c) 2003-2017, CKSource - Frederico Knabben. All rights reserved.
- * For licensing, see LICENSE.md.
- */
-
-/**
- * @module ckeditor5-acasi/utils
- */
-
-import BalloonPanelView from '@ckeditor/ckeditor5-ui/src/panel/balloon/balloonpanelview';
-import { toWidget, isWidget } from '@ckeditor/ckeditor5-widget/src/utils';
-import ModelElement from '@ckeditor/ckeditor5-engine/src/model/element';
 
 /**
  * A helper utility which positions the

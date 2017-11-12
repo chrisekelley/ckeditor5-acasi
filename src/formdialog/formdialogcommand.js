@@ -30,7 +30,7 @@ export default class FormDialogCommand extends Command {
    * @inheritDoc
    */
   refresh() {
-    // const element = this.editor.document.selection.getSelectedElement();
+    const selection = this.editor.document.selection.getSelectedElement();
     const element = this.editor.editing.view.selection;
     console.log("is it the correct form element?")
 
@@ -38,8 +38,8 @@ export default class FormDialogCommand extends Command {
       this.isEnabled = isCustomWidgetSelected( 'form', element );
 
     // if ( isCustomWidget( 'form', element ) && element.hasAttribute( 'id' ) ) {
-    if ( isCustomWidgetSelected( 'form', element ) && element.hasAttribute( 'id' ) ) {
-      this.value = element.getAttribute( 'id' );
+    if ( isCustomWidgetSelected( 'form', element ) && selection.hasAttribute( 'id' ) ) {
+      this.value = selection.getAttribute( 'id' );
       console.log("getting value of id.")
     } else {
       this.value = false;
