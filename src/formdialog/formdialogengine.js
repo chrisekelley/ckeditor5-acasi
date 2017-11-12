@@ -11,8 +11,8 @@ import FormDialogCommand from './formdialogcommand';
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 
 /**
- * The acasi intro src dialog engine plugin.
- * Registers the `introSrcDialog` command.
+ * The form dialog engine plugin.
+ * Registers the `formDialog` command.
  *
  * @extends module:core/plugin~Plugin
  */

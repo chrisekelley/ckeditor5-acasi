@@ -20,21 +20,18 @@ const symbols = {};
  */
 export function toFormWidget( widget, viewElement ) {
 
-  const symbol = Symbol(widget);
-  symbols[widget] = symbol
+  // const symbol = Symbol(widget);
+  // symbols[widget] = symbol
 
-  // viewElement.setCustomProperty( symbol, true );
-  viewElement.setCustomProperty( formSymbol, true );
+  const label = 'form'
+  return toWidget( viewElement, { label: labelCreator } );
 
-  // return toWidget( viewElement, { label: labelCreator } );
-  return toWidget( viewElement );
+  function labelCreator() {
+    const imgElement = viewElement.getChild( 0 );
+    const imgSrc = imgElement.getAttribute( 'img-src' );
 
-  // function labelCreator() {
-  //   const imgElement = viewElement.getChild( 0 );
-  //   const altText = imgElement.getAttribute( 'alt' );
-  //
-  //   return altText ? `${ altText } ${ label }` : label;
-  // }
+    return imgSrc ? `${ imgSrc } ${ label }` : label;
+  }
 }
 
 /**
@@ -44,7 +41,7 @@ export function toFormWidget( widget, viewElement ) {
  * @returns {Boolean}
  */
 export function isCustomWidget( widget, viewElement ) {
-  const symbol = symbols[widget]
+  // const symbol = symbols[widget]
   if (typeof viewElement !== 'undefined' && viewElement !== null) {
      // return !!viewElement.getCustomProperty( symbol ) && isWidget( viewElement );
      return !!viewElement.getCustomProperty( formSymbol ) && isWidget( viewElement );
@@ -76,7 +73,7 @@ export function isCustomWidgetSelected( widget, viewSelection ) {
  */
 export function toAcasiWidget( viewElement, label ) {
   viewElement.setCustomProperty( acasiSymbol, true );
-
+  label = 'acasi'
   return toWidget( viewElement, { label: labelCreator } );
 
   function labelCreator() {

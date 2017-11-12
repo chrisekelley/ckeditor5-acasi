@@ -4,7 +4,7 @@
  */
 
 /**
- * @module ckeditor5-acasi/acasitoolbar
+ * @module ckeditor5-acasi/formtoolbar
  */
 
 import Template from '@ckeditor/ckeditor5-ui/src/template';

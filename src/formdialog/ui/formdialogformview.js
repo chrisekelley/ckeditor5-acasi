@@ -114,7 +114,7 @@ export default class FormDialogFormView extends View {
 
       attributes: {
         class: [
-          'cke-text-alternative-form',
+          'cke-formId-form',
         ],
 
         // https://github.com/ckeditor/ckeditor5-image/issues/40
@@ -128,7 +128,7 @@ export default class FormDialogFormView extends View {
 
           attributes: {
             class: [
-              'cke-text-alternative-form__actions'
+              'cke-formId-form__actions'
             ]
           },
 
@@ -193,7 +193,7 @@ export default class FormDialogFormView extends View {
   _createLabeledInputView() {
     const t = this.locale.t;
     const labeledInput = new LabeledInputView( this.locale, InputTextView );
-    labeledInput.label = t( 'Intro Source' );
+    labeledInput.label = t( 'Change form settings' );
 
     return labeledInput;
   }

@@ -11,29 +11,19 @@ import buildModelConverter from '@ckeditor/ckeditor5-engine/src/conversion/build
 import buildViewConverter from '@ckeditor/ckeditor5-engine/src/conversion/buildviewconverter';
 import ModelElement from '@ckeditor/ckeditor5-engine/src/model/element';
 import ViewContainerElement from '@ckeditor/ckeditor5-engine/src/view/containerelement';
-import ViewEmptyElement from '@ckeditor/ckeditor5-engine/src/view/emptyelement';
-import {toImageWidget} from '@ckeditor/ckeditor5-image/src/image/utils';
 import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 import {toWidget} from '@ckeditor/ckeditor5-widget/src/utils';
 import Widget from '@ckeditor/ckeditor5-widget/src/widget';
-import {
-  viewFigureToModel,
-  // createImageAttributeConverter,
-  convertHoistableForm,
-  hoistFormThroughElement
-  // srcsetAttributeConverter
-} from './converters';
 import IntroSrcDialog from './introsrcdialog';
-// import FormDialog from './formdialog';
-// import { isAcasiWidgetSelected } from './utils';
+import FormDialog from './formdialog';
 import {toAcasiWidget, toFormWidget, isAcasiWidgetSelected} from './utils';
 
 export default class Acasi extends Plugin {
 
   // This getter lets the PluginCollection know that CaptionedImage requires BaseImage.
   static get requires() {
-    // return [ Widget, IntroSrcDialog, FormDialog ];
-    return [ Widget, IntroSrcDialog ];
+    return [ Widget, IntroSrcDialog, FormDialog ];
+    // return [ Widget, IntroSrcDialog ];
   }
 
   /**
@@ -67,7 +57,6 @@ export default class Acasi extends Plugin {
     schema.allow( { name: '$inline', inside: '$root' } );
 
     // schema.registerItem( 'image' );
-    // schema.allow( { name: 'image', attributes: [ 'src' ], inside: 'figure' } );
     // schema.objects.add( 'image' );
 
     schema.registerItem( 'figure' );
@@ -77,9 +66,7 @@ export default class Acasi extends Plugin {
     schema.objects.add( 'figure' );
 
     schema.registerItem( 'paper-radio-button' );
-    // schema.allow( { name: 'paper-radio-button', attributes: [ 'name', 'value' ], inside: 'acasi' } );
     schema.allow( { name: 'paper-radio-button', attributes: [ 'name' ], inside: 'tangy-acasi' } );
-    // schema.allow( { name: 'paper-radio-button', inside: '$root' } );
     schema.allow( { name: '$inline', inside: 'paper-radio-button' } );
     schema.allow( { name: 'image', inside: 'paper-radio-button' } );
     schema.allow( { name: 'figure', attributes: [ 'class' ], inside: 'paper-radio-button' } );
@@ -94,8 +81,9 @@ export default class Acasi extends Plugin {
     schema.objects.add( 'tangy-acasi' );
 
     schema.registerItem( 'form' );
-    schema.allow( { name: 'form', attributes: [ 'id', 'onchange' ], inside: '$root' } );
-    // schema.allow( { name: 'form', inside: '$root' } );
+    schema.allow( { name: 'form', inside: '$root' } );
+    // schema.allow( { name: 'form', attributes: [ 'id', 'onchange' ], inside: '$root' } );
+    schema.allow( { name: 'form', attributes: [ 'id' ], inside: '$root' } );
     schema.allow( { name: '$inline', inside: 'form' } );
     schema.allow( { name: 'image', inside: 'form' } );
     schema.allow( { name: 'tangy-acasi', inside: 'form' } );
@@ -105,46 +93,40 @@ export default class Acasi extends Plugin {
     buildModelConverter().for( data.modelToView )
       .fromElement( 'form' )
       .toElement( (element) => {
+        console.log("data.modelToView form element: ")
         const id = element.item.getAttribute('id')
         // const onchange = element.item.getAttribute('onchange')
         // let container = new ViewContainerElement( 'form', {'id': id, 'onchange': onchange} );
         let container = new ViewContainerElement( 'form', {'id': id} );
         return container
       })
-    // buildModelConverter().for( data.modelToView )
-    //   .fromElement( 'form' )
-    //   .toElement( (element) => {
-    //     let container = new ViewContainerElement( 'form');
-    //     return container
-    //   })
-
     // Build converter from model element to view element is used to render the getData output for the widget when you create new Elements in the editor.
     buildModelConverter().for( data.modelToView )
       .fromElement( 'tangy-acasi' )
-      // .toElement( 'tangy-acasi');
       .toElement( (element) => {
+        console.log("data.modelToView tangy-acasi element: ")
         const introSrc = element.item.getAttribute('intro-src')
-        // return new ViewContainerElement( 'tangy-acasi', { class: 'tangy-acasi' }, [new ViewEmptyElement( 'img' ), new ViewEmptyElement( 'img' ), new ViewEmptyElement( 'img' ), new ViewEmptyElement( 'img' )] );
         let container = new ViewContainerElement( 'tangy-acasi', {'intro-src': introSrc} );
         return container
       })
     buildModelConverter().for( data.modelToView )
       .fromElement( 'figure' )
+      .toElement( 'figure' )
       // .toElement( 'tangy-acasi');
-      .toElement( (element) => {
-        const klass = element.item.getAttribute('class')
-        console.log("data.modelToView figure element: " + klass)
-        // return new ViewContainerElement( 'tangy-acasi', { class: 'tangy-acasi' }, [new ViewEmptyElement( 'img' ), new ViewEmptyElement( 'img' ), new ViewEmptyElement( 'img' ), new ViewEmptyElement( 'img' )] );
-        let container = new ViewContainerElement( 'figure', {'class': klass} );
-        return container
-      })
+      // .toElement( (element) => {
+      //   const klass = element.item.getAttribute('class')
+      //   console.log("data.modelToView figure element: " + klass)
+      //   let container = new ViewContainerElement( 'figure', {'class': klass} );
+      //   return container
+      // })
     buildModelConverter().for( data.modelToView )
       .fromElement( 'paper-radio-button' )
       .toElement( (element) => {
+        console.log("data.modelToView paper-radio-button element: ")
         const name = element.item.getAttribute('name')
         const value = element.item.getAttribute('value')
-        // return new ViewContainerElement( 'tangy-acasi', { class: 'tangy-acasi' }, [new ViewEmptyElement( 'img' ), new ViewEmptyElement( 'img' ), new ViewEmptyElement( 'img' ), new ViewEmptyElement( 'img' )] );
-        let container = new ViewContainerElement( 'paper-radio-button', {'name': name, 'value': value} );
+        // let container = new ViewContainerElement( 'paper-radio-button', {'name': name, 'value': value} );
+        let container = new ViewContainerElement( 'paper-radio-button', {'name': name} );
         return container
       })
 
@@ -155,11 +137,10 @@ export default class Acasi extends Plugin {
         console.log("modelToView form element")
         const formContainer = new ViewContainerElement( 'figure', { class: 'tangy-form' } );
         const formWdiget = toFormWidget( 'form', formContainer );
-        // formWdiget.setAttribute( 'contenteditable', true );
+        formWdiget.setAttribute( 'contenteditable', true );
         return formWdiget;
       } );
 
-    //  Build converter from model element to view element for editing view pipeline. This affects how this element is rendered in the editor.
     buildModelConverter().for( editing.modelToView )
       .fromElement( 'tangy-acasi' )
       .toElement( (element) => {
@@ -170,59 +151,29 @@ export default class Acasi extends Plugin {
         return widget;
       } );
 
-    //  Build converter from model element to view element for editing view pipeline. This affects how this element is rendered in the editor.
     buildModelConverter().for( editing.modelToView )
       .fromElement( 'paper-radio-button' )
       .toElement( (element) => {
         console.log("modelToView paper-radio-button element")
         // const imageContainer = new ViewContainerElement( 'radio', { class: 'paper-radio-button' }, toImageWidget(new ViewEmptyElement( 'img' )) );
+        // const imageContainer = new ViewContainerElement( 'radio', { class: 'paper-radio-button' }, toImageWidget(new ViewElement( 'img' , {'src': 'assets/images/never.png'}) ) );
         const imageContainer = new ViewContainerElement( 'radio', { class: 'paper-radio-button' } );
         const widget = toWidget( imageContainer );
         widget.setAttribute( 'contenteditable', true );
         return widget;
       } );
 
-    //  Build converter from model element to view element for editing view pipeline. This affects how this element is rendered in the editor.
     buildModelConverter().for( editing.modelToView )
       .fromElement( 'figure' )
       .toElement( (element) => {
         console.log("modelToView figure element")
         const klass = element.item.getAttribute('class')
         const container = new ViewContainerElement( 'figure', { class: klass } );
+        // let container = new ViewContainerElement( 'figure', {'class': klass}, toImageWidget(new ViewEmptyElement( 'img' )) );
         // const widget = toWidget( container );
         // widget.setAttribute( 'contenteditable', true );
         return container;
       } );
-
-
-    // buildViewConverter().for( data.viewToModel )
-    //   .fromElement( 'form' )
-    //   .fromAttribute( 'form' )
-    //   // .toElement(new ModelElement('form'));
-    //   .toElement( () => new ModelElement( 'form' ) );
-
-
-    // Build converter from view element to model element for data pipeline. When the editor is consuming html,
-    // recognize your widget and put it in the model so that editing.modelToView can then render it in the editing view
-    // buildViewConverter().for( data.viewToModel )
-    //   .fromElement( 'form' )
-    //   // .toElement( () => {
-    //   .toElement( (viewForm) => {
-    //     // const imageUrl = 'assets/babycat.jpg';
-    //     // const imageElement = new ModelElement( 'image', {
-    //     //   src: imageUrl
-    //     // });
-    //     // new ModelElement( 'tangy-acasi' ), {'intro-src':'assets/sounds/1.mp3'}, [imageElement]
-    //     console.log("converting a form element")
-    //     // new ModelElement('form'), { src: viewForm.getAttribute('id'), onchange: viewForm.getAttribute('onchange') }
-    //     const formContainer = new ViewContainerElement( 'figure', { class: 'tangy-form' } );
-    //     toFormWidget( 'form', formContainer );
-    //   });
-        // const formContainer = new ViewContainerElement( 'figure', { class: 'tangy-form' } );
-        // const formWdiget = toFormWidget( 'form', formContainer );
-        // formWdiget.setAttribute( 'contenteditable', true );
-        // return formWdiget;
-      // });
 
     buildViewConverter().for(data.viewToModel).from({
       name: 'form',
@@ -234,8 +185,11 @@ export default class Acasi extends Plugin {
     }).toElement(viewImage => new ModelElement('form', { id: viewImage.getAttribute('id') }));
 
 
-    data.viewToModel.on( 'element:form', convertHoistableForm, { priority: 'low' } );
-    data.viewToModel.on( 'element', hoistFormThroughElement, { priority: 'low' } );
+    // data.viewToModel.on( 'element:form', convertHoistableForm, { priority: 'low' } );
+    // data.viewToModel.on( 'element', hoistFormThroughElement, { priority: 'low' } );
+
+    // data.viewToModel.on( 'element:img', convertHoistableImage, { priority: 'low' } );
+    // data.viewToModel.on( 'element', hoistImageThroughElement, { priority: 'low' } );
 
     buildViewConverter().for(data.viewToModel).from({
       name: 'tangy-acasi',
