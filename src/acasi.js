@@ -112,7 +112,6 @@ export default class Acasi extends Plugin {
     buildModelConverter().for( data.modelToView )
       .fromElement( 'figure' )
       .toElement( 'figure' )
-      // .toElement( 'tangy-acasi');
       // .toElement( (element) => {
       //   const klass = element.item.getAttribute('class')
       //   console.log("data.modelToView figure element: " + klass)
@@ -264,7 +263,8 @@ export default class Acasi extends Plugin {
           // // const widgetElement = new ModelElement('figure', { class: 'fancy-widget' },imageElement)
           // editor.data.insertContent( imageElement, editor.document.selection );
           const acasi = new ModelElement( 'tangy-acasi', {'intro-src':url}, [prb1, prb2, prb3, prb4])
-          const form = new ModelElement( 'form', {'id': '', 'onchange': ''}, [acasi])
+          // const form = new ModelElement( 'form', {'id': '', 'onchange': ''}, [acasi])
+          const form = new ModelElement( 'form', {'id': ''}, [acasi])
           // const acasi = new ModelElement( 'tangy-acasi', { src: imageUrl });
           editor.data.insertContent( form, editor.document.selection );
         } );
