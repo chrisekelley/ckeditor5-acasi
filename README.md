@@ -99,59 +99,119 @@ First make a general declaration
 ```
 
 Then register each of your plugin elements and their schema. Start with the dependencies and move up the chain. In this
-plugin, there are three elements:
+plugin, there are three custom elements:
 - paper-radio-button
 - tangy-acasi
 - form
+
+But you must also declare some of the custom elements' dependencies. paper-radio-button has a figure child, which has an img child:
+
+```
+    schema.registerItem( 'figure' );
+    schema.allow( { name: 'figure', attributes: [ 'class' ], inside: 'paper-radio-button' } );
+    schema.allow( { name: 'image', attributes: [ 'src' ], inside: 'figure' } );
+    schema.objects.add( 'figure' );
+```
 
 Here's an example of paper-radio-button:
 
 ```
     schema.registerItem( 'paper-radio-button' );
-    schema.allow( { name: 'paper-radio-button', attributes: [ 'name', 'value' ], inside: 'acasi' } );
+    // schema.allow( { name: 'paper-radio-button', attributes: [ 'name', 'value' ], inside: 'acasi' } );
+    schema.allow( { name: 'paper-radio-button', attributes: [ 'name' ], inside: 'tangy-acasi' } );
     // schema.allow( { name: 'paper-radio-button', inside: '$root' } );
     schema.allow( { name: '$inline', inside: 'paper-radio-button' } );
     schema.allow( { name: 'image', inside: 'paper-radio-button' } );
     schema.objects.add( 'paper-radio-button' );
 ```
 
-After declaring the schemas, you must tell cheditor5 how to transform the model to the view element, and back again, for
-each element that you declare. This is for data.modelToView:
+Continue moving up the chain. Notice how tangy-acasi allows paper-radio-button inside tangy-acasi
 
 ```
-    // Build converter from model element to view element is used to render the getData output for the widget when you create new Elements in the editor.
-    buildModelConverter().for( data.modelToView )
-      .fromElement( 'form' )
-      .toElement( (element) => {
-        const id = element.item.getAttribute('id')
-        const onchange = element.item.getAttribute('onchange')
-        let container = new ViewContainerElement( 'form', {'id': id, 'onchange': onchange} );
-        return container
-      })
+    schema.registerItem( 'tangy-acasi' );
+    schema.allow( { name: 'tangy-acasi', attributes: [ 'intro-src' ], inside: 'form' } );
+    // schema.allow( { name: 'tangy-acasi', inside: '$root' } );
+    schema.allow( { name: '$inline', inside: 'tangy-acasi' } );
+    schema.allow( { name: 'image', inside: 'tangy-acasi' } );
+    schema.allow( { name: 'paper-radio-button', inside: 'tangy-acasi' } );
+    schema.objects.add( 'tangy-acasi' )
 ```
 
-Next, create a buildModelConverter for editing.modelToView in order to render this plugin to the editor:
+And lastly, form:
+
+```
+    schema.registerItem( 'form' );
+    schema.allow( { name: 'form', attributes: [ 'id', 'onchange' ], inside: '$root' } );
+    // schema.allow( { name: 'form', inside: '$root' } );
+    schema.allow( { name: '$inline', inside: 'form' } );
+    schema.allow( { name: 'image', inside: 'form' } );
+    schema.allow( { name: 'tangy-acasi', inside: 'form' } );
+    schema.objects.add( 'form' );
+```
+
+After declaring the schemas, you must tell cheditor5 how to transform each custom element to a view element, and back again, for
+each element that you declare. This is for data.modelToView and editing.modelToView:
 
 ```
     //  Build converter from model element to view element for editing view pipeline. This affects how this element is rendered in the editor.
-    buildModelConverter().for( editing.modelToView )
+    buildModelConverter().for( editing.modelToView, data.modelToView )
+      .fromElement( 'form' )
+      .toElement( (element) => {
+        console.log("form element")
+        const formContainer = new ViewContainerElement( 'figure', { class: 'tangy-form' } );
+        const formWdiget = toFormWidget( 'form', formContainer );
+        formWdiget.setAttribute( 'contenteditable', true );
+        return formWdiget;
+      } );
+
+    //  Build converter from model element to view element for editing view pipeline. This affects how this element is rendered in the editor.
+    buildModelConverter().for( editing.modelToView, data.modelToView )
       .fromElement( 'tangy-acasi' )
       .toElement( (element) => {
-        // const imageContainer = createImageViewElement();
         console.log("tangy-acasi element")
-        const figureContainer1 = new ViewContainerElement( 'figure', { class: 'paper-radio-button' });
-        const figureContainer2 = new ViewContainerElement( 'figure', { class: 'paper-radio-button' });
-        const figureContainer3 = new ViewContainerElement( 'figure', { class: 'paper-radio-button' });
-        const figureContainer4 = new ViewContainerElement( 'figure', { class: 'paper-radio-button' });
-        const widgetContainer = new ViewContainerElement( 'figure', { class: 'tangy-acasi' },
-          [figureContainer1, figureContainer2, figureContainer3, figureContainer4] );
+        const widgetContainer = new ViewContainerElement( 'figure', { class: 'tangy-acasi' });
         const widget = toAcasiWidget( widgetContainer );
         widget.setAttribute( 'contenteditable', true );
         return widget;
       } );
+
+    //  Build converter from model element to view element for editing view pipeline. This affects how this element is rendered in the editor.
+    buildModelConverter().for( editing.modelToView, data.modelToView )
+      .fromElement( 'paper-radio-button' )
+      .toElement( (element) => {
+        console.log("paper-radio-button element")
+        const imageContainer = new ViewContainerElement( 'radio', { class: 'paper-radio-button' }, toImageWidget(new ViewEmptyElement( 'img' )) );
+        const widget = toWidget( imageContainer );
+        widget.setAttribute( 'contenteditable', true );
+        return widget;
+      } );
+
 ```
 
+Next, create a build converter from view element to model element for data pipeline. When the editor is consuming html,
+recognize your widget and put it in the model so that editing.modelToView can then render it in the editing view. You need a converter for each element:
 
-Using the acasi toolbar as an example.
+```
+    buildViewConverter().for(data.viewToModel).from({
+      name: 'form',
+      attribute: { id: /./ }
+    }).toElement(viewImage => new ModelElement('form', { id: viewImage.getAttribute('id') }));
 
-acasitoolbar.js -
+    buildViewConverter().for(data.viewToModel).from({
+      name: 'tangy-acasi',
+      attribute: { 'intro-src': /./ }
+    }).toElement(viewImage => new ModelElement('tangy-acasi', { 'intro-src': viewImage.getAttribute('intro-src') }));
+
+    buildViewConverter().for(data.viewToModel).from({
+      name: 'paper-radio-button',
+      attribute: { 'name': /./ }
+    }).toElement(viewImage => new ModelElement('paper-radio-button', { 'name': viewImage.getAttribute('name') }));
+
+    buildViewConverter().for(data.viewToModel).from({
+      name: 'figure',
+      attribute: { 'class': /./ }
+    }).toElement(viewImage => new ModelElement('figure', { 'class': viewImage.getAttribute('class') }));
+
+```
+
+Note that figure has a converter, but img doesn't. Img is handled by the ckeditor5 plugin, which is already loaded.
