@@ -16,3 +16,11 @@ msgstr "Intro Source"
 msgctxt "Label for the Acasi Change form settings input."
 msgid "Change form settings"
 msgstr "Change form settings"
+
+msgctxt "Label for the  form id settings input."
+msgid "Form id"
+msgstr "Form id"
+
+msgctxt "Label for the Onchange javascript form settings input."
+msgid "Onchange javascript"
+msgstr "Onchange javascript"

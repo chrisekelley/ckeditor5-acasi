@@ -13,13 +13,13 @@ import { isCustomWidgetSelected } from './../utils';
 
 
 /**
- * The intro src dialog command. It is used to change the `id` attribute on `<form>` elements.
+ * The form dialog command. It is used to change the `value` attribute on `<form>` elements.
  *
  * @extends module:core/command~Command
  */
 export default class FormDialogCommand extends Command {
   /**
-   * The command value: `false` if there is no `id` attribute, otherwise the value of the `id` attribute.
+   * The command value: `false` if there is no `value` attribute, otherwise the value of the `value` attribute.
    *
    * @readonly
    * @observable
@@ -35,12 +35,32 @@ export default class FormDialogCommand extends Command {
     console.log("is it the correct form element?")
 
       // this.isEnabled = isCustomWidget( 'form', element );
-      this.isEnabled = isCustomWidgetSelected( 'form', element );
+    this.isEnabled = isCustomWidgetSelected( 'form', element );
 
     // if ( isCustomWidget( 'form', element ) && element.hasAttribute( 'id' ) ) {
-    if ( isCustomWidgetSelected( 'form', element ) && selection.hasAttribute( 'id' ) ) {
-      this.value = selection.getAttribute( 'id' );
-      console.log("getting value of id.")
+    // if ( isCustomWidgetSelected( 'form', element ) && selection.hasAttribute( 'id' ) ) {
+
+    if ( isCustomWidgetSelected( 'form', element )) {
+      let hasIdAttribute = false;
+      let idAttribute = '';
+      let onchangeAttribute = '';
+      if (selection !== null && typeof selection !== 'undefined') {
+        hasIdAttribute = selection.hasAttribute('id');
+        idAttribute = selection.getAttribute('id');
+        onchangeAttribute = selection.getAttribute('onchange');
+      } else {
+        if (typeof element.hasAttribute === 'function') {
+          hasIdAttribute = element.hasAttribute('id');
+          idAttribute = element.getAttribute('id');
+        }
+      }
+      if (hasIdAttribute) {
+        this.value = idAttribute
+        this.value2 = onchangeAttribute
+        console.log("getting value of id for this form: " + idAttribute)
+      } else {
+        this.value = false;
+      }
     } else {
       this.value = false;
     }
@@ -63,6 +83,7 @@ export default class FormDialogCommand extends Command {
       const batch = options.batch || doc.batch();
 
       batch.setAttribute( element, 'id', options.newValue );
+      batch.setAttribute( element, 'onchange', options.newValue2 );
     } );
   }
 }

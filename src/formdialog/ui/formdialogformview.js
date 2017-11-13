@@ -19,6 +19,8 @@ import submitHandler from '@ckeditor/ckeditor5-ui/src/bindings/submithandler';
 import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler';
 import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker';
 import FocusCycler from '@ckeditor/ckeditor5-ui/src/focuscycler';
+import BoxedEditorUIView from "@ckeditor/ckeditor5-ui/src/editorui/boxed/boxededitoruiview";
+import TextareaView from "../../textareaview";
 
 /**
  * The IntroSrcDialogFormView class.
@@ -55,7 +57,14 @@ export default class FormDialogFormView extends View {
      *
      * @member {module:ui/labeledinput/labeledinputview~LabeledInputView} #labeledTextarea
      */
-    this.labeledInput = this._createLabeledInputView();
+    this.formIdInput = this._createFormIdInputView();
+
+    /**
+     * A textarea with a label.
+     *
+     * @member {module:ui/labeledinput/labeledinputview~LabeledInputView} #labeledTextarea
+     */
+    this.onchangeInput = this._createOnchangeInputView();
 
     /**
      * A button used to submit the form.
@@ -122,13 +131,28 @@ export default class FormDialogFormView extends View {
       },
 
       children: [
-        this.labeledInput,
+        this.formIdInput,
         {
           tag: 'div',
 
           attributes: {
             class: [
               'cke-formId-form__actions'
+            ]
+          }
+          // ,
+          // children: [
+          //   this.saveButtonView,
+          //   this.cancelButtonView
+          // ]
+        },
+        this.onchangeInput,
+        {
+          tag: 'div',
+
+          attributes: {
+            class: [
+              'cke-onchangeInput-form__actions'
             ]
           },
 
@@ -144,7 +168,7 @@ export default class FormDialogFormView extends View {
       view: this
     } );
 
-    [ this.labeledInput, this.saveButtonView, this.cancelButtonView ]
+    [ this.formIdInput, this.onchangeInput, this.saveButtonView, this.cancelButtonView ]
       .forEach( v => {
         // Register the view as focusable.
         this._focusables.add( v );
@@ -190,11 +214,26 @@ export default class FormDialogFormView extends View {
    * @private
    * @return {module:ui/labeledinput/labeledinputview~LabeledInputView}
    */
-  _createLabeledInputView() {
+  _createFormIdInputView() {
     const t = this.locale.t;
-    const labeledInput = new LabeledInputView( this.locale, InputTextView );
-    labeledInput.label = t( 'Change form settings' );
+    const formIdInput = new LabeledInputView( this.locale, InputTextView );
+    formIdInput.label = t( 'Form id' );
 
-    return labeledInput;
+    return formIdInput;
+  }
+
+  /**
+   * Creates an input with a label.
+   *
+   * @private
+   * @return {module:ui/labeledinput/labeledinputview~LabeledInputView}
+   */
+  _createOnchangeInputView() {
+    const t = this.locale.t;
+    // const onchangeInput = new LabeledInputView( this.locale, InputTextView );
+    const onchangeInput = new LabeledInputView( this.locale, TextareaView );
+    onchangeInput.label = t( 'Onchange javascript' );
+
+    return onchangeInput;
   }
 }

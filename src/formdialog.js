@@ -96,7 +96,7 @@ export default class FormDialog extends Plugin {
     this._balloon = this.editor.plugins.get( 'ContextualBalloon' );
 
     /**
-     * A form containing a textarea and buttons, used to change the `alt` text value.
+     * A form containing a textarea and buttons, used to change the form values.
      *
      * @member {module:image/imagetextalternative/ui/textalternativeformview~FormDialogFormView} #form
      */
@@ -104,7 +104,8 @@ export default class FormDialog extends Plugin {
 
     this.listenTo( this._form, 'submit', () => {
       editor.execute( 'formDialog', {
-        newValue: this._form.labeledInput.inputView.element.value
+        newValue: this._form.formIdInput.inputView.element.value,
+        newValue2: this._form.onchangeInput.inputView.element.value,
       } );
 
       this._hideForm( true );
@@ -151,7 +152,8 @@ export default class FormDialog extends Plugin {
 
     const editor = this.editor;
     const command = editor.commands.get( 'formDialog' );
-    const labeledInput = this._form.labeledInput;
+    const formIdInput = this._form.formIdInput;
+    const onchangeInput = this._form.onchangeInput;
 
     if ( !this._balloon.hasView( this._form ) ) {
       this._balloon.add( {
@@ -161,13 +163,14 @@ export default class FormDialog extends Plugin {
     }
 
     // Make sure that each time the panel shows up, the field remains in sync with the value of
-    // the command. If the user typed in the input, then canceled the balloon (`labeledInput#value`
+    // the command. If the user typed in the input, then canceled the balloon (`formIdInput#value`
     // stays unaltered) and re-opened it without changing the value of the command, they would see the
     // old value instead of the actual value of the command.
     // https://github.com/ckeditor/ckeditor5-image/issues/114
-    labeledInput.value = labeledInput.inputView.element.value = command.value || '';
+    formIdInput.value = formIdInput.inputView.element.value = command.value || '';
+    onchangeInput.value = onchangeInput.inputView.element.value = command.value2 || '';
 
-    this._form.labeledInput.select();
+    this._form.formIdInput.select();
   }
 
   /**
