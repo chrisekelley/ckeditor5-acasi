@@ -55,6 +55,7 @@ export default class Acasi extends Plugin {
 
     // Configure schema.
     schema.allow( { name: '$inline', inside: '$root' } );
+    schema.allow( { name: '$block', inside: '$root' } );
 
     // schema.registerItem( 'image' );
     // schema.objects.add( 'image' );

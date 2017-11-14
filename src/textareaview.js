@@ -63,10 +63,9 @@ export default class TextareaView extends View {
       tag: 'textarea',
       attributes: {
         // type: 'text',
-        // class: [
-        //   'ck-input',
-        //   'ck-input-text'
-        // ],
+        class: [
+          'ck-textarea'
+        ],
         id: bind.to( 'id' ),
         placeholder: bind.to( 'placeholder' ),
         readonly: bind.to( 'isReadOnly' )

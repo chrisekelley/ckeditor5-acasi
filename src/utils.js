@@ -39,14 +39,15 @@ export function toFormWidget( widget, viewElement ) {
   // symbols[widget] = symbol
   viewElement.setCustomProperty( formSymbol, true );
   const label = 'form'
-  return toWidget( viewElement, { label: labelCreator } );
+  // return toWidget( viewElement, { label: labelCreator } );
+  return toWidget( viewElement, { label: label } );
 
-  function labelCreator() {
-    const imgElement = viewElement.getChild( 0 );
-    const imgSrc = imgElement.getAttribute( 'img-src' );
-
-    return imgSrc ? `${ imgSrc } ${ label }` : label;
-  }
+  // function labelCreator() {
+  //   const imgElement = viewElement.getChild( 0 );
+  //   const imgSrc = imgElement.getAttribute( 'img-src' );
+  //
+  //   return imgSrc ? `${ imgSrc } ${ label }` : label;
+  // }
 }
 
 /**

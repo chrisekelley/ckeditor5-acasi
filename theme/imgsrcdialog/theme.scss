@@ -93,3 +93,13 @@
 	box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1) inset;
 	background-color: white;
 }
+
+.ck-textarea {
+	width: 252px;
+	height: 100px;
+	box-shadow: inset 2px 2px 3px rgba(0,0,0,.1);
+	background: #fff;
+	border: 1px solid #bfbfbf;
+	padding: .4em .64em;
+	min-width: 21em;
+}
