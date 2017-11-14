@@ -8,6 +8,7 @@
  */
 
 import Command from '@ckeditor/ckeditor5-core/src/command';
+import { isCustom } from '../utils';
 import { isCustomWidget } from '../utils';
 import { isCustomWidgetSelected } from './../utils';
 
@@ -30,17 +31,20 @@ export default class FormDialogCommand extends Command {
    * @inheritDoc
    */
   refresh() {
-    const selection = this.editor.document.selection.getSelectedElement();
-    const element = this.editor.editing.view.selection;
+    // const element = this.editor.editing.view.selection;
+    const element = this.editor.document.selection.getSelectedElement();
     console.log("is it the correct form element?")
 
-      // this.isEnabled = isCustomWidget( 'form', element );
-    this.isEnabled = isCustomWidgetSelected( 'form', element );
+    // this.isEnabled = isCustomWidget( 'form', element );
+    this.isEnabled = isCustom( 'form', element );
+    // this.isEnabled = isCustomWidgetSelected( 'form', element );
 
     // if ( isCustomWidget( 'form', element ) && element.hasAttribute( 'id' ) ) {
     // if ( isCustomWidgetSelected( 'form', element ) && selection.hasAttribute( 'id' ) ) {
 
-    if ( isCustomWidgetSelected( 'form', element )) {
+    // if ( isCustomWidgetSelected( 'form', element )) {
+    if ( this.isEnabled) {
+      const selection = this.editor.document.selection.getSelectedElement();
       let hasIdAttribute = false;
       let idAttribute = '';
       let onchangeAttribute = '';

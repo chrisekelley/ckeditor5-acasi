@@ -50,7 +50,17 @@ export function toFormWidget( widget, viewElement ) {
 }
 
 /**
- * Checks if a given view element is an acasi widget.
+ * Checks if a given model element name is the same as the Custom Property.
+ *
+ * @param {module:engine/view/element~Element} viewElement
+ * @returns {Boolean}
+ */
+export function isCustom( widget, modelElement ) {
+  return modelElement instanceof ModelElement && modelElement.name == widget;
+}
+
+/**
+ * Checks if a given view element is a custom widget by checking if it has its Symbol as a Custom Property.
  *
  * @param {module:engine/view/element~Element} viewElement
  * @returns {Boolean}
@@ -75,6 +85,23 @@ export function isCustomWidgetSelected( widget, viewSelection ) {
   const viewElement = viewSelection.getSelectedElement();
 
   return !!( viewElement && isCustomWidget( widget, viewElement ) );
+}
+
+/**
+ * A helper utility which positions the
+ * {@link module:ui/panel/balloon/contextualballoon~ContextualBalloon} instance
+ * with respect to the custom widget in the editor content, if one is selected.
+ *
+ * @param {module:core/editor/editor~Editor} editor The editor instance.
+ */
+export function repositionCustomWidgetContextualBalloon( widget, editor ) {
+  const balloon = editor.plugins.get( 'ContextualBalloon' );
+
+  if ( isCustomWidgetSelected( widget, editor.editing.view.selection ) ) {
+    const position = getBalloonPositionData( editor );
+
+    balloon.updatePosition( position );
+  }
 }
 
 /**

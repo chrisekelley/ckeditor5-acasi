@@ -12,7 +12,7 @@ import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import ToolbarView from '@ckeditor/ckeditor5-ui/src/toolbar/toolbarview';
 import ContextualBalloon from '@ckeditor/ckeditor5-ui/src/panel/balloon/contextualballoon';
 import { isCustomWidgetSelected } from './utils';
-import { repositionContextualBalloon, getBalloonPositionData } from './utils';
+import { repositionCustomWidgetContextualBalloon, getBalloonPositionData } from './utils';
 
 const balloonClassName = 'ck-toolbar-container ck-editor-toolbar-container';
 
@@ -126,7 +126,7 @@ export default class FormToolbar extends Plugin {
     const editor = this.editor;
 
     if ( this._isVisible ) {
-      repositionContextualBalloon( editor );
+      repositionCustomWidgetContextualBalloon( 'form', editor );
     } else {
       if ( !this._balloon.hasView( this._toolbar ) ) {
         this._balloon.add( {
