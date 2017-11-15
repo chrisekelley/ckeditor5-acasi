@@ -67,7 +67,7 @@ export default class Acasi extends Plugin {
     schema.objects.add( 'figure' );
 
     schema.registerItem( 'paper-radio-button' );
-    schema.allow( { name: 'paper-radio-button', attributes: [ 'name' ], inside: 'tangy-acasi' } );
+    schema.allow( { name: 'paper-radio-button', attributes: [ 'name', 'value' ], inside: 'tangy-acasi' } );
     schema.allow( { name: '$inline', inside: 'paper-radio-button' } );
     schema.allow( { name: 'image', inside: 'paper-radio-button' } );
     schema.allow( { name: 'figure', attributes: [ 'class' ], inside: 'paper-radio-button' } );
@@ -125,8 +125,7 @@ export default class Acasi extends Plugin {
         console.log("data.modelToView paper-radio-button element: ")
         const name = element.item.getAttribute('name')
         const value = element.item.getAttribute('value')
-        // let container = new ViewContainerElement( 'paper-radio-button', {'name': name, 'value': value} );
-        let container = new ViewContainerElement( 'paper-radio-button', {'name': name} );
+        let container = new ViewContainerElement( 'paper-radio-button', {'name': name, 'value': value} );
         return container
       })
 
@@ -178,10 +177,6 @@ export default class Acasi extends Plugin {
     buildViewConverter().for(data.viewToModel).from({
       name: 'form',
       attribute: { id: /./ }
-    // }).toElement((viewImage) => {
-    //   console.log("hoot")
-    //   new ModelElement('form', { id: viewImage.getAttribute('id') })
-    // });
     }).toElement(viewImage => new ModelElement('form', { id: viewImage.getAttribute('id') }));
 
 
@@ -215,18 +210,13 @@ export default class Acasi extends Plugin {
       .consuming( { attribute: [ 'onchange' ] } )
       .toAttribute( viewForm => ( { key: 'onchange', value: viewForm.getAttribute( 'onchange' ) } ) );
 
-    // Converter for figure element from view to model.
-    // data.viewToModel.on( 'element:figure', viewFigureToModel() );
-
-    // // Build converter for view img element to model image element.
-    // buildViewConverter().for( data.viewToModel )
-    //   .from( { name: 'tangy-acasi', attribute: { 'intro-src': /./ } } )
-    //   .toElement( (viewImage) =>  {
-    //     console.log("getting intro-src")
-    //     new ModelElement( 'image', { 'intro-src': viewImage.getAttribute( 'intro-src' ) } )
-    //   } );
-
-    // createImageAttributeConverter( [ editing.modelToView, data.modelToView ], 'src' );
+    buildViewConverter().for( data.viewToModel )
+      .from( { name: 'paper-radio-button', attribute: { value: /./ } } )
+      .consuming( { attribute: [ 'value' ] } )
+      .toAttribute( (viewForm) => {
+        console.log("converting prb.")
+        return { key: 'value', value: viewForm.getAttribute( 'value' ) }
+      } );
 
     // Add tangy-acasi button to feature components.
     editor.ui.componentFactory.add( 'acasi', locale => {
