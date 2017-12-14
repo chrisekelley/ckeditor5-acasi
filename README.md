@@ -23,7 +23,7 @@ brew update
 brew install watchman
 ```
 
-wml add  ~/source/Tangerine-Community/ckeditor5-acasi ~/source/Tangerine-Community/Tangerine-3.x.x/Tangerine/tangerine-forms/node_modules/ckeditor5-acasi
+wml add  ~/source/Tangerine-Community/ckeditor5-acasi ~/source/chrisekelley/Tangerine/tangy-forms/node_modules/ckeditor5-acasi
 wml start
 
 ## Plugin configuration
