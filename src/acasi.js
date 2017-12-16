@@ -233,7 +233,7 @@ export default class Acasi extends Plugin {
       // this.listenTo( view, 'execute', () => {
         let url = prompt( 'Sound URL' );
         if (url == "") {
-          url = '../src/assets/1.mp3'
+          url = '/content/assets/1.mp3'
         }
 
         let urlArray = url.split('/')

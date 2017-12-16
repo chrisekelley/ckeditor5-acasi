@@ -110,7 +110,8 @@ export default class FormDialogFormView extends View {
       }
     } );
 
-    Template.extend( this.saveButtonView.template, {
+    // Template.extend( this.saveButtonView.template, {
+    this.saveButtonView.extendTemplate( {
       attributes: {
         class: [
           'ck-button-action'
